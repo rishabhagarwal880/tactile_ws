@@ -6,30 +6,34 @@ from std_msgs.msg import Float64
 import builtins
 import collections
 from scipy.signal import savgol_filter
+import numpy as np
 
 #create the list of capacitance
 cap_list=collections.deque(maxlen=20)
+cap_list_mean=collections.deque(maxlen=100)
 #float capacitance
 capacitance = 100.00
-capacitance2 = 100.00
-pub1 = rospy.Publisher('capacitance_val_2', Float64)
-pub2 = rospy.Publisher('capacitance_val_3', Float64)
+mean_cap = 100.00
+pub1 = rospy.Publisher('capacitance_val', Float64)
+pub2 = rospy.Publisher('mean_cap', Float64)
 
 
 def callback(data):
    # rospy.loginfo(rospy.get_caller_id() + "I heard %s", data.data)
     global cap_list
     global capacitance
-    cap_list.append(data.data)
+    cap_list.append(data.data/100000)
+    cap_list_mean.append(data.data/100000)
     if len(cap_list) < 20 :
 	capcitance = cap_list[-1] 
     else :
-       y= savgol_filter(cap_list, 19, 3)
-       p= savgol_filter(cap_list, 19, 2)
+       y= savgol_filter(cap_list, 15, 2)
+      # p= savgol_filter(cap_list, 19, 2)
        capacitance = y[-1]
-       capacitance2 = p[-1]
        pub1.publish(Float64(capacitance))
-       pub2.publish(Float64(capacitance2))
+       if len(cap_list_mean) == 100 :
+       		mean_cap = np.mean(y)
+       		pub2.publish(Float64(mean_cap))
        rospy.loginfo(rospy.get_caller_id() + "capacitance  %s", capacitance)
         
 def listener():
