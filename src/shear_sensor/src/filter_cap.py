@@ -1,19 +1,16 @@
 #!/usr/bin/env python
 import rospy
 import matplotlib.pyplot as plt
-from std_msgs.msg import String
-from std_msgs.msg import Float64
 import builtins
 import collections
-from scipy.signal import savgol_filter
 import numpy as np
+from std_msgs.msg import String
+from std_msgs.msg import Float64
+from scipy.signal import savgol_filter
 
 # create the list of capacitance
 cap_list=collections.deque(maxlen=20)
 cap_list_mean=collections.deque(maxlen=200)
-
-#plt.axis([0, 10, 0, 1])
-#plt.ion()
 
 # float capacitance
 capacitance = 100.00
@@ -23,9 +20,7 @@ mean_cap = 100.00
 pub_cap = rospy.Publisher('capacitance_val', Float64)
 pub_mean = rospy.Publisher('mean_cap', Float64)
 
-#count = 1
 def callback(data):
-   # global count  
     # Create the list to filter and calculate mean
     cap_list.append(data.data/100000)
     if len(cap_list) < 20 :
@@ -33,17 +28,13 @@ def callback(data):
     else :
        # Savitzky Golay filter for continuous stream of data
        y = savgol_filter(cap_list, 15, 2)
-      # p= savgol_filter(cap_list, 19, 2)
        cap_list_mean.append(y[-1])
        capacitance = y[-1]
        pub_cap.publish(Float64(capacitance))
        if len(cap_list_mean) == 200 :
        		mean_cap = np.mean(cap_list_mean)
        		pub_mean.publish(Float64(mean_cap))
-                #count = count + 1
-                #plt.plot(count,capacitance,'r--',count, mean_cap,'bs')
-                #plt.pause(0.05)
-       rospy.loginfo("capacitance value  %s", capacitance)
+       rospy.loginfo("capacitance  %s and mean %s" % (capacitance, mean_cap))
         
 def listener():
 
