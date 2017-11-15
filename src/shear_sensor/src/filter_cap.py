@@ -3,6 +3,7 @@ import rospy
 import matplotlib.pyplot as plt
 from std_msgs.msg import String
 from std_msgs.msg import Float64
+from shear_sensor.msg import cap
 import builtins
 import collections
 from scipy.signal import savgol_filter
@@ -20,9 +21,9 @@ capacitance = 100.00
 mean_cap = 100.00
 
 # set up publisher
-pub_cap = rospy.Publisher('capacitance_val', Float64)
-pub_mean = rospy.Publisher('mean_cap', Float64)
-
+pub_cap = rospy.Publisher('capacitance_val', cap)
+#pub_mean = rospy.Publisher('mean_cap', Float64)
+msg = cap()
 #count = 1
 def callback(data):
    # global count  
@@ -36,10 +37,13 @@ def callback(data):
       # p= savgol_filter(cap_list, 19, 2)
        cap_list_mean.append(y[-1])
        capacitance = y[-1]
-       pub_cap.publish(Float64(capacitance))
+       #pub_cap.publish(Float64(capacitance))
        if len(cap_list_mean) == 200 :
        		mean_cap = np.mean(cap_list_mean)
-       		pub_mean.publish(Float64(mean_cap))
+       		#pub_mean.publish(Float64(mean_cap))
+       	        msg.capacitance = Float64(capacitance)
+       	        msg.mean = Float64(mean_cap)
+		pub_cap.publish(msg)
                 #count = count + 1
                 #plt.plot(count,capacitance,'r--',count, mean_cap,'bs')
                 #plt.pause(0.05)
