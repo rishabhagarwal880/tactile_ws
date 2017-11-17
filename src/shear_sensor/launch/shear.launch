@@ -1,0 +1,3 @@
+<launch>
+  <node name="filter_cap" pkg="shear_sensor" type="filter_cap.py" />
+</launch>
