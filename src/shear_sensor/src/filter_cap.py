@@ -47,7 +47,7 @@ def callback(data):
                 #count = count + 1
                 #plt.plot(count,capacitance,'r--',count, mean_cap,'bs')
                 #plt.pause(0.05)
-       rospy.loginfo("capacitance %s and mean %s" % (msg.capacitance, msg.mean))
+      # rospy.loginfo("capacitance %s and mean %s" % (msg.capacitance, msg.mean))
         
 def listener():
 
