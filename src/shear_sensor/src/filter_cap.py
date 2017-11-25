@@ -34,7 +34,7 @@ def callback(data):
        if len(cap_list_mean) == 200 :
        		mean_cap = np.mean(cap_list_mean)
        		pub_mean.publish(Float64(mean_cap))
-       rospy.loginfo("capacitance  %s and mean %s" % (capacitance, mean_cap))
+                rospy.loginfo("capacitance  %s and mean %s" % (capacitance, mean_cap))
         
 def listener():
 
