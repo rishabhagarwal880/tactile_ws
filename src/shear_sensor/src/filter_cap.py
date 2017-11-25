@@ -26,7 +26,7 @@ pub_cap = rospy.Publisher('capacitance_val', cap)
 msg = cap()
 #count = 1
 def callback(data):
-   # global count  
+    # global count  
     # Create the list to filter and calculate mean
     cap_list.append(data.data/100000)
     if len(cap_list) < 20 :
@@ -34,20 +34,22 @@ def callback(data):
     else :
        # Savitzky Golay filter for continuous stream of data
        y = savgol_filter(cap_list, 15, 2)
-      # p= savgol_filter(cap_list, 19, 2)
+       # p= savgol_filter(cap_list, 19, 2)
        cap_list_mean.append(y[-1])
        capacitance = y[-1]
        #pub_cap.publish(Float64(capacitance))
        if len(cap_list_mean) == 200 :
        		mean_cap = np.mean(cap_list_mean)
        		#pub_mean.publish(Float64(mean_cap))
-       	        msg.capacitance = Float64(capacitance)
-       	        msg.mean = Float64(mean_cap)
+       	        # msg.capacitance = Float64(capacitance)
+       	        msg.capacitance = capacitance
+       	        # msg.mean = Float64(mean_cap)
+       	        msg.mean = mean_cap
 		pub_cap.publish(msg)
                 #count = count + 1
                 #plt.plot(count,capacitance,'r--',count, mean_cap,'bs')
                 #plt.pause(0.05)
-      # rospy.loginfo("capacitance %s and mean %s" % (msg.capacitance, msg.mean))
+                rospy.loginfo("capacitance %s and mean %s" % (msg.capacitance, msg.mean))
         
 def listener():
 
