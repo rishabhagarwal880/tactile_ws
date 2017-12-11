@@ -40,8 +40,11 @@ unsigned long offsetting;
 
 //initialize the ROS node
 ros::NodeHandle nh;
+
 float x;
-std_msgs::Float64  cap_msg;
+std_msgs::Float64  shear_cap_msg;
+std_msgs::Float64  normal_cap_msg;
+
 ros::Publisher shear_pub("raw_cap_shear", &shear_cap_msg);
 ros::Publisher normal_pub("raw_cap_normal", &normal_cap_msg);
 
