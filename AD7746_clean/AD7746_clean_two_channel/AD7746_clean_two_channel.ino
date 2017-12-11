@@ -133,7 +133,7 @@ void loop() // main program begins
   delay(1);
   
   selectCIN(2); 
-  long value = readValue();
+  value = readValue();
   x=value;
   //ros publisher on capacitance
   cap_msg.data = x;

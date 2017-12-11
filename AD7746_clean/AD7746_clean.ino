@@ -169,4 +169,3 @@ long readValue() {
   ret =value;
   return ret;
 }
-
