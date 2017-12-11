@@ -42,7 +42,8 @@ unsigned long offsetting;
 ros::NodeHandle nh;
 float x;
 std_msgs::Float64  cap_msg;
-ros::Publisher chatter("chatter", &cap_msg);
+ros::Publisher shear_pub("raw_cap_shear", &shear_cap_msg);
+ros::Publisher normal_pub("raw_cap_normal", &normal_cap_msg);
 
 
 void setup()
@@ -94,8 +95,8 @@ void setup()
   //initialization of ROS Publisher
   nh.getHardware()->setBaud(9600);
   nh.initNode();
-  nh.advertise(chatter);
-  
+  nh.advertise(shear_pub);
+  nh.advertise(normal_pub);
 }
 
 void loop() // main program begins
@@ -127,8 +128,8 @@ void loop() // main program begins
   }
   x=value;
   //ros publisher on capacitance
-  cap_msg.data = x;
-  chatter.publish( &cap_msg );
+  shear_cap_msg.data = x;
+  shear_pub.publish( &shear_cap_msg );
   nh.spinOnce();
   delay(1);
   
@@ -136,8 +137,8 @@ void loop() // main program begins
   value = readValue();
   x=value;
   //ros publisher on capacitance
-  cap_msg.data = x;
-  chatter.publish( &cap_msg );
+  normal_cap_msg.data = x;
+  normal_pub.publish( &normal_cap_msg );
   nh.spinOnce();
   delay(1);
   selectCIN(1); 
