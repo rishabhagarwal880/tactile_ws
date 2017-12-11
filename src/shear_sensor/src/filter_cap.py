@@ -10,36 +10,61 @@ from shear_sensor.msg import cap
 from scipy.signal import savgol_filter
 
 # create the list of capacitance
-cap_list=collections.deque(maxlen=20)
-cap_list_mean=collections.deque(maxlen=200)
+shear_cap_list=collections.deque(maxlen=20)
+shear_cap_list_mean=collections.deque(maxlen=100)
+normal_cap_list=collections.deque(maxlen=20)
+normal_cap_list_mean=collections.deque(maxlen=100)
 
 # float capacitance
-capacitance = 100.00
-mean_cap = 100.00
+shear_capacitance = 100.00
+shear_mean_cap = 100.00
+
+normal_capacitance = 100.00
+normal_mean_cap = 100.00
 
 # Mean list size
-mean_size = 200
+mean_size = 100
 
 # set up publisher
-pub_cap = rospy.Publisher('capacitance_val', cap)
-msg = cap()
+shear_pub_cap = rospy.Publisher('shear_capacitance_val', cap)
+shear_msg = cap()
 
-def callback(data):
+normal_pub_cap = rospy.Publisher('normal_capacitance_val', cap)
+normal_msg = cap()
+
+def shear_callback(data):
     # Create the list to filter and calculate mean
-    cap_list.append(data.data/100000)
-    if len(cap_list) < 20 :
-	capacitance = cap_list[-1] 
+    shear_cap_list.append(data.data/100000)
+    if len(shear_cap_list) < 20 :
+	shear_capacitance = shear_cap_list[-1] 
     else :
        # Savitzky Golay filter for continuous stream of data
-       y = savgol_filter(cap_list, 15, 2)
-       cap_list_mean.append(y[-1])
-       capacitance = y[-1]
-       if len(cap_list_mean) == mean_size :
-       		mean_cap = np.mean(cap_list_mean)
-       	        msg.capacitance = capacitance
-       	        msg.mean = mean_cap
-		pub_cap.publish(msg)
-                rospy.loginfo("capacitance %s and mean %s" % (msg.capacitance, msg.mean))
+       y = savgol_filter(shear_cap_list, 15, 2)
+       shear_cap_list_mean.append(y[-1])
+       shear_capacitance = y[-1]
+       if len(shear_cap_list_mean) == mean_size :
+       		shear_mean_cap = np.mean(shear_cap_list_mean)
+       	        shear_msg.capacitance = shear_capacitance
+       	        shear_msg.mean = shear_mean_cap
+		shear_pub_cap.publish(shear_msg)
+                rospy.loginfo("capacitance %s and mean %s" % (shear_msg.capacitance, shear_msg.mean))
+        
+def normal_callback(data):
+    # Create the list to filter and calculate mean
+    normal_cap_list.append(data.data/100000)
+    if len(normal_cap_list) < 20 :
+	normal_capacitance = normal_cap_list[-1] 
+    else :
+       # Savitzky Golay filter for continuous stream of data
+       y = savgol_filter(normal_cap_list, 15, 2)
+       normal_cap_list_mean.append(y[-1])
+       normal_capacitance = y[-1]
+       if len(normal_cap_list_mean) == mean_size :
+       		normal_mean_cap = np.mean(normal_cap_list_mean)
+       	        normal_msg.capacitance = normal_capacitance
+       	        normal_msg.mean = normal_mean_cap
+		normal_pub_cap.publish(normal_msg)
+                rospy.loginfo("capacitance %s and mean %s" % (normal_msg.capacitance, normal_msg.mean))
         
 def listener():
 
@@ -49,7 +74,8 @@ def listener():
     # name for our 'listener' node so that multiple listeners can
     # run simultaneously.
     rospy.init_node('filter_cap', anonymous=True)
-    rospy.Subscriber("chatter", Float64, callback)
+    rospy.Subscriber("raw_cap_shear", Float64, shear_callback)
+    rospy.Subscriber("raw_cap_normal", Float64, normal_callback)
     # spin() simply keeps python from exiting until this node is stopped
     rospy.spin()
 
