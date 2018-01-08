@@ -170,12 +170,12 @@ void selectCIN(int CIN){      //, uint8_t CAP_FREQ){
   if (CIN == 1)
   {
     writeRegister(REGISTER_CAP_SETUP, _BV(7) | _BV(5)); // cap setup reg - cap 1 enabled
-   // writeRegister(REGISTER_CONFIG, CAP_FREQ | _BV(0)); // Single conversion mode
+    writeRegister(REGISTER_CONFIGURATION, _BV(0)); // Single conversion mode
   }
   else if (CIN == 2)
   {
     writeRegister(REGISTER_CAP_SETUP, _BV(7) | _BV(6)); // cap setup reg - cap 2 enabled
-   // writeRegister(REGISTER_CONFIG, CAP_FREQ | _BV(0)); // Single conversion mode
+    writeRegister(REGISTER_CONFIGURATION, _BV(0)); // Single conversion mode
   }
   }
 
